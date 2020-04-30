@@ -1,0 +1,1709 @@
+---
+title: "Econometria Espacial"
+output:
+  html_document:
+    df_print: paged
+---
+
+### 1.2 Matrices de pesos 
+
+El primer concepto que encara el libro tiene que ver con la matriz de pesos en econometria espacial. Es la representación de la cercanía del resto de los elementos respecto al elemento $y_i$, la "cercania" es, en efecto, la distancia entre los puntos. Luego justifica la existencia de $W$ y pasa a las formas de especificarla.
+
+### 1.3 Formas de especificar la matriz de pesos. 
+
+Hay 3 formas en las que puede la matriz $W$
+
+a) Booleana: es ó no vecino.
+
+En este caso se suele utilizar la forma normalizada
+
+$$ w_{ij} = 1 /N_i$$ 
+Donde $N$ es la cantidad de vecinos
+
+b) Distancia geografica en alguna medida de espacio.
+
+Sea $d_{ij}$ una medida de distancia. $w_{ij} = 1/{d_{ij}}$  es una forma tradicional para lograr que el peso sea inversamente proporcional a la distancia. Por otra parte, se suelen normalizar estas distancias con la forma:
+
+$$ w_{ij} = \frac{1/{d_{ij}}}{\sum_{r=1}^N(1/{d_{ir}})} ,    i = 1,...,N$$
+
+c) Distancia no-geografica en alguna medida.
+
+Por ejemplo las diferencias absolutas en Ingresos
+
+$$ w_{ij}  =  |I_i - I_j|^{-1}$$
+
+El problema de este tipo de especificación recae sobre el hecho de que el elemento la matriz de pesos $w_{ij}$ no tiene restricción porque si $I_i \simeq I_j$ entonces $w_{ij} \to |\infty|$
+
+Una mejoría sería:
+ 
+ $$ w_{ij}  = \alpha \bigg[ 1- \frac{|I_i - I_j|}{I_i+I_j}\bigg]$$
+ 
+ Donde se puede predetarminar el limite superior del valor del peso con $\alpha$
+
+
+Ó
+
+$$ w_{ij}  =  F[-|I_i - I_j|]$$
+donde $F(x)$ es una función de distribución acumulativa
+
+ó, multivariablemente
+
+$$  w_{ij} = 1 / d_{ij} $$
+$$ d_{ij} = [a_1(z_{i1}-z_{j1})^2+...+a_r(z_{ir}-z_{jr})^2]^{1/2} $$
+
+Tambien puede darse que el caso que cada variable explicativa tenga su propia matriz de pesos, en cuyo caso 
+
+$$y_i = b_0 +b_1x_i+\sum_{k=1}^r a_kW_i^k  X $$
+
+### 1.4 Formas tipicas de especificacion de la matriz de pesos.
+
+Estas son formas de la opcion $a$ mencionada arriba
+
+Definiciones desde la perspectiva del ajedrez
+
+* torre
+* reina 
+* doble-reina
+
+Definiciones según el criterio de _k-ahead_ y _k-behind_
+
+
+
+
+
+### 2.1 El modelo general
+
+El modelo mas general de regresion por minimos cuadrados ordinarios en el contexto de econometria espacial es para el $i_{th}$ elemento (el subindice "." indica "todas las columnas"):
+$$ y_i = a + X_{i.} \beta_1 + \rho_1 (W_{i.}y) + (W_{i.}X)\beta_2 + u_i,$$
+con las restricciones
+$$ u_i = \rho_2(W_{i.}u)+\epsilon_i,$$
+
+$$|\rho_1|<1, |\rho_2|<1 $$
+¿Que significa cada cosa?
+
+#### Las variables
+
+  + $X_{i.}$ es un vector fila de $1\times k$ ~ $[X_1, X_2,...,X_i,...,X_k]$ variables/columnas/features de la matriz $X$ que es $N\times k$
+  
+  
+  + $W_{i.}$ es un vector fila de $1\times N$ ~ $[W_1, W_2,...,W_i,...,W_N]$ de observaciones, donde el subindice $i$ representa la fila de la matriz de pesos definida en el capitulo anterior, cuyas dimensiones son de $N\times N$
+  
+  + $y$ vector columna $N\times 1$ que contiene todas las variables dependientes 
+  
+  + $W_{i.} * y$ , son los rezagos espaciales de la variable dependiente
+  
+  + $W_{i.} * X$ , son los rezagos espaciales de las $k$ variables independientes
+  
+#### El termino de error 
+
+  + $u_i$ es el termino de error del modelo.
+  
+  + $\epsilon_i$ es el termino de error aleatorio que es i.i.d~$(0, \sigma^2_\epsilon)$
+
+#### Los parametros a estimar
+
+  + $\beta_1$ y $\beta_2$ son vectores columna $k\times 1$
+  + $a$ , $\rho_1$ y $\rho_2$ son escalares
+  
+  
+Para los casos  $W_i  y$ y $W_i  u$, recordar que la multiplicación de $W_i*u_i = 0$ y $W_i*y_i = 0$ porque la matriz de pesos, tiene valor $0$ en el $j_{th}$ elemento (Recordar, además, que la matriz $W$ es una matriz cuadrada de $N\times N$ entonces, $i_{th}=j_{th}$ y las propiedades de la multiplización de vectores y matrizes)
+
+
+Como estamos hablando de matrices y vectores se pueden apilar para dar con la forma
+
+$$ y = ae_N + X\beta_1 + \rho_1(Wy) +(WX)\beta_2 + u,$$
+$$ u = \rho_2(Wu)+\epsilon$$
+Donde:
+
+$$
+W =  \begin{bmatrix}
+W_{1.}  \\
+W_{2.} \\
+\vdots \\
+W_{N.}
+\end{bmatrix},
+X =  \begin{bmatrix}
+X_{1.}  \\
+X_{2.} \\
+\vdots \\
+X_{N.}
+\end{bmatrix}, u =  \begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_N
+\end{bmatrix}, \epsilon =  \begin{bmatrix}
+\epsilon_1  \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_N
+\end{bmatrix}, e_N = \begin{bmatrix}1_1 \\ 1_2 \\ \vdots \\ 1_N \end{bmatrix}
+$$
+
+De este modelo general se desprenden:
+
++ El modelo espacial de Durbin (el mas general)
+
+$$ y = ae_N + X\beta_1 + \rho_1(Wy) +(WX)\beta_2 + u,$$
+$$ u = \rho_2(Wu)+\epsilon$$
+
++ El modelo de rezagos espaciales, $\beta_2 = 0$ y $\rho_2 = 0$ 
+
+$$ y = ae_N + X\beta_1 + \rho_1(Wy) + \epsilon,$$
+
++ El modelo de error espacial, $\beta_2 = 0$ y $\rho_1 = 0$ 
+
+
+$$ y = ae_N + X\beta_1 + u,$$
+$$ u = \rho_2(Wu)+\epsilon$$
+
+
+
+El termino $WX$ puede ser reexpresado $[WX_{.1},...,WX_{.k}]$ y que cada uno de los elementos $r_{th}$ del vector $N\times 1$, $WX_{.1}$ es :
+
+$$
+(WX_{.1})_r = \sum_{j=1}^N w_{r,j}*x_{j1}
+$$
+Formando, computacionalmente:
+$$
+\begin{bmatrix}
+(WX_{.1})_1 & (WX_{.2})_1 & \ldots & (WX_{.k})_1 \\
+(WX_{.1})_2 & (WX_{.2})_2 & \ldots & (WX_{.k})_2\\
+\vdots & \vdots & \ddots &  \vdots \\
+(WX_{.1})_N & (WX_{.2})_N & \ldots & (WX_{.k})_N
+\end{bmatrix}
+$$
+Pero, conceptualmente:
+
+$(WX_{.1})_r$ lo que es, es una suma ponderada de los valores que toma la variable independiente (regresora), a lo largo de la matriz de pesos (del rezago espacial). Por lo general, no se usa la matriz mencionada arriba, sino que se utilizan el rezago de un subconjunto de regresoras, dependerá de cuales sean las variables en cuestión y cual sea el problema a resolver.
+
+### 2.1.1 Arrays triangulares
+
+Existe una consecuencia algebraica al tratar con rezagos espaciales en la forma de matrices de pesos ($W$).
+
+La solucion computacional del modelo global y general previamente mencionado es
+
+$$
+y = (I_N-\rho_1W)^{-1}[ae_n+X\beta_1 + WX\beta_2+u],
+$$
+$$
+y = (I_N-\rho_1W)^{-1}[a\epsilon_N+X\beta_1 + WX\beta_2]+(I_N-\rho_1W)^{-1}(I_N-\rho_2W)^{-1}\epsilon
+$$
+Que contiene los elementos, $(I_N-\rho_{1,2}W)^{-1}$, que dependen del tamaño de la muestra ($N$), por lo que los valores de $y$ dependen de $N$. Un array triangular lo que brinda es una matriz de respuesta de la variable dependiente $y$,  en función del tamaño de la muestra y esta conformada por 
+$$
+y_{ij}
+$$
+Donde $i$ es el indice del elemento, y $j$ es el tamaño de la muestra
+
+$$
+
+\begin{bmatrix}
+y_{11} & y_{12} & y_{13} \ldots & y_{1n}\\
+& y_{22} & y_{23} \ldots & y_{2n} \\
+&  & y_{33} \ldots & y_{3n} \\
+& & & \vdots
+\end{bmatrix}
+
+$$
+
+Esta es la principal diferencia entre rezagos en el tiempo y rezagos en el espacio. En el tiempo el pasado es inmutable, por lo que $y_t$ siempre es el mismo independientemente del tamaño de la muestra, en el espacio, no.
+
+Es por la naturaleza de la econometria espacial, que los resultados de la inferencia de los modelos se hacen en relacion a aquellos obtenidos en "teoria de muestreos grandes". Es decir, se estima para $N \to \infty$, y se asume que los resultados son una aproximación razonable para un $N$ finito.
+
+Todas estas implicancias, afectan a las variables regresoras (independientes).
+
+¿Que significa todo eso? Que, en estudios formales, se presentan $y_N$ y $X_N$, aclarando el numero de la muestra. 
+
+
+### 2.1.2 Teorema Gersgorin y $W$.
+
+
+
+El segmento $(I_N-aW)$, de la resolución (que surge resolviendo $y$ según fue mencionado más arriba), __supone__ que la matriz es non-singular para cualquier $|a|<1$.
+Esto es consistente con los valores que toman $\rho_{1,2}$, los cuales son continuos en un región conocida.
+
+El truco es que $(I_N-aW)$ puede ser normalizada tal que se cumpla $|a|<1$, sin afectar el tamaño, signo o significación de la estimación de los parametros.
+
+La importancia de esta normalización tiene tres aristas:
+
++ La inferencias en muchos modelos espaciales esta basada en las propiedades de muestreos grandes de los estimadores. Estas propiedades dependen  $(I_N-aW)^{-1}$ en un espacio continuo y conocido.
+
++ Importantes medidas de los efectos del rezago espacial dependen de $(I_N-aW)^{-1}$ en un intervalo continuo de $a$
+
++ Se complica computar los estimadores 
+
+
+
+__Nota 1__
+Si $W$ esta normalizada en filas,$(I_N-aW)$ es singular en $a=1$
+
+__Nota 2__
+Si $W$ esta normalizada en filas,$(I_N-aW)^{-1}$ existe para todo $|a|<1$
+
+
+__Nota 3__
+$W$ es una matriz de pesos, no normalizada, con:
+
+  + $w_{ii} = 0$, para $i = 1,...,N$ (elementos de la diagonal de la matriz), 
+  
+
+  + Todas las raices de $W \in\mathbb{R}$ 
+  
+    + Se refiere, a las raices de la ecuación caracteristica de la matriz $det(W-\lambda I)=0$
+  
+  
+  + $\lambda_{max}$ y $\lambda_{min}$, son las máximas y mínimas raices.
+  
+    + Se asume que, como en el caso típico de que todas las raices sean reales, $\lambda_{max}$>0 y $\lambda_{min}$<0.
+    
+_Entonces_, $(I_N-aW)$ es no-singular para todo
+
+$$ 
+\lambda_{min}^{-1}<a<\lambda_{max}^{-1}
+$$
+
+
+### 2.1.3 Normalizacion para asegurar que el espacio de los parametros sea continuo
+
+Una transformacion de $W$ es $W^*$, tal que:
+
+ + $(I_N-aW^*)$ es no-singular para todo $|a|<1$.
+ + Interpretaciones y significatividad de los parametros de la regresion no se ven afectados.
+
+
+Sea $\alpha$ el menor entre, el max de la suma de las filas y el max la suma de las columnas:
+
+Formalmente:
+
+$$
+\alpha=min(r,c),
+$$
+$$
+r=max_i \sum_j |w_{ij}| = max_i R_i   ,\\
+c=max_j \sum_i |w_{ij}| = max_j C_j
+$$
+
+$(I_N-aW)$ Es no-singular para todo $|a|<1/\alpha$
+
+Por lo que la normalización esta dada por:
+
+$$
+y = ae_N + X\beta +\rho_1Wy+\epsilon \\
+  = ae_N + X\beta + (\rho_1\alpha)\Big(\frac{W}{\alpha}\Big)y+\epsilon
+$$
+
+
+ó
+
+$y = ae_N + X\beta +\rho_1^*W^*y+\epsilon$
+  
+$\rho_1^* = \rho_1\alpha$
+  
+$W^* = \frac{W}{\alpha}$
+
+
+
+
+
+### 2.1.4 Una condicion importante en analisis de grandes muestreos.
+
+A menos que:
+
+   + $\rho_2 = 0$, los terminos de error estan espacialmente correlacionados y son heteroscedasticos
+   
+   + $\rho_1 = 0$. el modelo contiene endogeneidad que debe ser dirigida
+
+
+
+Estos problemas, de heteroscedasticidad, autocorrelacion en el termino de error y endogeneidad pueden ser resueltos a traves de metodos de maxima verosimilitud o procedimientos de variables instrumentales.
+
+Los tests de hipotesis basados en estas soluciones estan basados en muestras grandes, las cuales tipicamente dependen en supuestos de la matriz de pesos que no suelen ser dirigidos, que son los siguientes:
+
+1. Decimos que las sumas de filas y columnas de una matriz $N\times N$ estan uniformemente acotadas por valores absolutos si:
+
+$$
+max_i \sum_{j=1}^N |a_{ij}| \leq  c_a, \\
+max_j \sum_{i=1}^N |a_{ij}| \leq  c_a,
+$$
+
+
+para todo $N\geq1$ y $c_a$ es una constante finita que no depende de $N$
+
+Una matriz que cumple con esta condición, se le llama __absolutamente sumable__ 
+
+
+2. Si $A$ y $B$ son absolutamente sumables, también lo es $D = AB$ 
+
+3. Si $A$ es absolutamente sumable, sus elementos estan acotados.
+
+4. Si $A$ es absolutamente sumable y $Z_{N\times K}$ tiene elementos uniformemente acotados, entonces los elementos de $Z'AZ$, son como mucho, de orden $N$
+
+
+
+### 2.2 Varios casos especiales.
+
+#### Estimacion cuando $\rho_{1,2} = 0$
+
+En el caso que los coeficientes de autocorrelación espacial sean cero, el modelo general se reduce a
+
+$$
+y = ae_N +X\beta_1 + (WX)\beta_2 + \epsilon
+$$
+Que finalmente queda, agrupando por un lado las variables $Z=(e_N,X,WX)$ y por otro los parametros $\gamma ' = (a, \beta_1', \beta_2')$:
+
+$$
+y = Z  \gamma + \epsilon
+$$
+
+Donde  $Z$ es un grupo lineal de rango $2K+1$, para evitar multicolinealidad perfecta. En este caso, $X$ no contiene el termino constante.
+
+Recordad que:
+
+  +  $\epsilon$ ~ i.i.d.$(0,\sigma^2I_n)$ 
+  + $X$ y $W$ son no estocasticos.
+  
+El estimador de $\gamma$ es
+
+$\hat\gamma = (Z'Z)^{-1}Z'y$
+
+Y se puede demostrar que $\hat\gamma$ es insesgado , reemplazando $y$  y demostrando que $E(\hat\gamma) =  \gamma$:
+
+
+$$
+\hat\gamma = \gamma + (Z'Z)^{-1}Z'\epsilon \\
+E(\hat\gamma) = \gamma + E[(Z'Z)^{-1}Z'\epsilon] \\
+E(\hat\gamma) = \gamma + (Z'Z)^{-1}Z'E[\epsilon] , \\ 
+E[\epsilon] = 0 \\
+E(\hat\gamma) =  \gamma
+$$
+
+
+Analogamente, la matriz de varianza-covarianza $VC_\hat\gamma$:
+
+$$
+VC_\hat\gamma = \sigma_\epsilon^2(Z'Z)^{-1}
+
+$$
+Pero esto no alcanza para hacer el test de hipotesis sobre los estimadores porque generalmente $\sigma_\epsilon^2$ es desconocido. Por lo que también hay que estimarlo.
+
+$$
+\hat\sigma_\epsilon^2 = \frac{(y - Z\hat\gamma)'(y - Z\hat\gamma)}{(N-2K-1)}
+$$
+
+Por ejemplo:
+
+Sea $\hat\gamma_i$ el elemento $i_{th}$ de $\hat\gamma$, y $\hat\sigma_{\hat\gamma i}^2$ sea el elemento $i_{th}$ de $\hat {VC}_{\hat\gamma}$ = $ \hat\sigma_\epsilon^2(Z'Z)^{-1}$
+
+$\hat\gamma_i$ es significativo (en dos colas) al 5% si:
+
+$$
+\Big|\frac{\hat\gamma_i}{\hat\sigma_{\hat\gamma_i}}\Big| > t_{N-2K-1}(0.975) \sim = 1.96
+$$
+
+
+De forma similar comparando hipotesis
+
+$H_0: R\gamma = r$ vs 
+$H_1: R\gamma \neq r$
+
+Donde:
+
+  + R es una matriz conocida de forma $q \times 2K+1$, donde $q<2K+1$
+  
+  + r es un vector conocido de forma $q \times 1 $
+
+Mas adelante se dan los supuestos mas generales del modelo.
+
+De momento, pueden decirse dos cosas respecto a estos modelos:
+
+  + $Z$ esta uniformemente acotado en valores absolutos.
+  
+  + $N^{-1}Z'Z \to Q_{zz}$ donde $Q_{zz}$ es una matriz finita no-singular
+  
+  + $\hat\gamma = \gamma + (Z'Z)^{-1}Z'\epsilon$ puede expresarse como $N^{1/2}(\hat\gamma-\gamma)=N(Z'Z)^{-1}[N^{-1/2}Z'\epsilon]$, y dado el supuesto anterior, y por el teorema central del límite y algun manejo algebraico se puede demostrar que:
+  
+       + $N^{1/2}(\hat\gamma-\gamma) \to N(0, \sigma_\epsilon^2Q^{-1}_{zz})$
+  
+y el corolario de esto es que:
+
+$\hat\gamma \simeq N[\gamma, \hat\sigma_{\epsilon}(Z'Z)^{-1}]$
+
+Donde el estimador de $\sigma$, es 
+
+$\hat\sigma_\epsilon=\frac{(y-Z \hat\gamma)'(y-Z \hat\gamma)}{N-\tau}$
+  
+donde $\tau$ es $(2K+1)$ ó cero.
+
+(Ejemplos en script de R)
+
+#### Estimacion cuando $\rho_{1} = 0$ y $\rho_{2} \neq 0$
+
+En un paso adicional a la generalización, incorporando el rezago espacial del error, por lo que se suele llamarle __spatial error model__:
+
+
+$$
+y = ae_N +X\beta_1 + (WX)\beta_2 + u \\
+u = \rho_2 Wu + \epsilon
+$$
+ó 
+
+$$
+y = Z\gamma + u \\
+u = \rho_2 Wu + \epsilon
+$$
+
+
+Debe ser estimado por minimos cuadrados generalizados $GLS$ que da cuenta de la epecificación en la perturbación 
+
+__Propiedades de $u$__:
+
+$u = (I_N-\rho_2W)^{-1}\epsilon$ donde $\epsilon$ ~ $(0,\sigma_\epsilon^2I_N)$
+
+$E(u)=0$
+
+$E(uu') = \sigma^2_\epsilon \Omega_u$ donde $\Omega_u  = (I_N-\rho_2W)^{-1}(I_N-\rho_2W')^{-1}$
+
+para la mayoría de las matrices de peso $W$, $u$ sera heteroscedastico y estará espacialmente autocorrelacionado.
+
+Si $\rho_2$ __es conocido__. El estimador GLS es:
+
+$$
+\gamma_{GLM}=(Z'\Omega_u Z) ^{-1} Z'\Omega_u^{-1}y
+$$
+
+Por lo que el estimador es, finalmente:
+$$
+\hat\gamma_{GLM}=\gamma + (Z'\Omega_u Z) ^{-1} Z'\Omega_u^{-1}u
+$$
+$$
+E[\hat\gamma_{GLM}] = \gamma \\
+VC_{\hat\gamma_{GLM}} = (Z'\Omega_u Z) ^{-1}
+$$
+
+
+La realidad es que no se sabe el valor de $\rho_2$ por lo que existen metodos para estimarlo:
+
+ + Basado en maxima verosimilitud (utiliza un metodo iterativo entre GLM y MV, empezando por un MCO, hasta que se cumpla algun criterio de convergencia)
+ 
+ + El estimador de momentos generalizado de $\rho_2$
+ 
+
+
+#### Supuestos subyacentes detrás del modelo mas general:
+
+El modelo general era:
+
+$$ 
+y_i = a + X_{i.} \beta_1 + \rho_1 (W_{i.}y) + (W_{i.}X)\beta_2 + u_i,\\
+u_i = \rho_2(W_{i.}u)+\epsilon_i
+$$
+
+y, en forma resumida
+
+$$
+y = Z\beta +u, \\
+u = \rho_2(Wu)+\epsilon, \\|\rho_{1,2}|<1
+$$
+Donde
+$$
+Z = (e_N, X, Wy, WX) \\
+\beta = a, B'_1, \rho_1, B'_2
+$$
+Para dar cuenta de la endogeneidad en el modelo introducida por $Wy$, se utiliza un método de variable instrumental, el instrumento ideal sería $E(Wy)$. Asumiendo que las raices de las ecuaciones caracteristicas de $W$ sean $\leq1$, en valores absolutos (lo que ocurriria si $W$ esta normalizada en filas):
+
+$$
+(I_N- \rho_1W)^{-1} = I_N+\rho_1W+\rho_1^2W^2+...
+$$
+
+Y habiamos dicho que nuestra solucion esta dada por 
+$$
+y = (I_N- \rho_1W)^{-1}[ae_N+XB_1+WXB_2+u]
+$$
+Reemplazando:
+$$
+y =  [I_N+\rho_1W+\rho_1^2W^2+...][ae_N+XB_1+WXB_2+u]
+$$
+Como $E(u)=0$, la media de $y$ es lineal en los parametros. Nuestra matriz instrumental $H$ es $N\times k_H$ no-estocastica que consiste en columnas linearmente independientes
+
+$H = (e_N,X,We_N,WX,W^2e_N,W^2X,...,W^rX)_{LI}$
+
+
+donde $r$ es una constante finita, y se suele tomar con $r=2$. 
+
+En muchos casos, los terminos $We_N,W^2e_N,...,W^re_N$ no son considerados porque $We_N=e_N$  por repetidas substituciones.
+
+Para el término de error:
+
+sea $u^- =Wu$,$u^{-^-} =W²u$ y $\epsilon^- =W\epsilon$ se generan las matrices de error para el metodo de variable instrumental.
+
+$$
+g = \frac{1}{N} \begin{bmatrix} u'u \\ u⁻'u⁻ \\ u'u⁻\end{bmatrix}
+$$
+
+$$
+G = \frac{1}{N} \begin{bmatrix} -u^-u^- & 2u'u^- & N \\ -u⁻⁻'u⁻⁻' & 2u⁻⁻'u^- & Tr(W'W)\\ -u⁻'u^-⁻ & u'u⁻⁻ + u⁻'u⁻ & 0 \end{bmatrix}
+$$
+
+Entonces, las matrices
+
+$H$, sirve para la resolucion del modelo, para tomar en cuenta la endogeneidad.
+$g$ y $G$, son las matrices que vinculan el termino de error cuando se usa el metodo de variables instrumentales
+
+##### Supuesto 1
+
+Los elementos del vector de innovación $\epsilon$ son
+
+  + i.i.d.~ $(0,\sigma_\epsilon^2)$
+  
+  + $E(\epsilon^4_i)$
+
+
+Así como está, no toma en cuenta la naturaleza del array triangular, es decir, la dependencia de $\epsilon$ respecto a $N$. En teoria de grandes muestras puede demostrarse que si bien en grandes muestras la $Cov(\epsilon_{iN},\epsilon_{jN}) = 0$ para $i \neq j$, la $Cov(\epsilon_{iN},\epsilon_{iN^*}) \neq 0$ y $\epsilon_{iN} \neq \epsilon_{iN^*}$, porque incluso, al cambiar N puede haber cambios en los ordenes de magnitud.
+
+
+##### Supuesto 2
+
+$|\rho_{1,2}|<1$ 
+
+##### Supuesto 3
+
+Sea $P_{(a)} = (I_N-aW)$, entonces $P_{(a)}$ es no-singular para todo $|a|<1$
+
+Los supuestos 2 y 3 se aseguran que el sistema pueda ser resuelto por el termino independiente en funcion de las variables exogenas, la matriz de pesos y el termino estocastico.
+
+
+##### Supuesto 4
+
+Los elementos de la diagonal de $W$, son 0. 
+
+Esto es consecuencia de la forma en que se construye W, dado que los elemenetos de la diagonal establecen la distancia entre un elemento y si mismo. 
+
+
+##### Supuesto 5
+
+Las filas y columnas de $W$ y $P_{(a)}^{-1}$ estan uniformemente acotadas en valor absoluto para todo $|a|<1$
+
+Implica una restricción respecto al tipo de modelos que pueden dejar afuera algunos. En concreto, por ejemplo, aquellos que posean una unidad central en el sentido en que todo el resto se refieran a ella en una forma significativa. Ya que la suma de las columnas en el elemento central $\to \infty$, en tanto $N \to \infty$
+
+##### Supuesto 6
+
+  + a) 
+  
+  $g \to g^*$ donde los elementos de   $g^{*}$ son finitos
+  
+  + b) 
+  
+  $G \to G^*$ donde $G^{*}$ es una matriz no-singular finita
+  
+Este supuesto refiere a la consistencia del estimador de $\rho_2$
+
+
+##### Supuesto 7
+
+La matriz de regresoras X y la matriz instrumental H (utilizada para resolver la endogeneidad propia del modelo), son matrices no-estocasticas cuyos elementos estan __absolutamente acotados__ en valor.
+
+##### Supuesto 8
+
+  + a La matriz de las variables exogenas X es de rango completo $rank_{(e_N,X,WX)}=2k+1$
+  
+  + b La matriz de las variables instrumentales tiene rango completo en columnas y contiene por lo menos las columnas $(e_N,X,WX, W^2X)$ y $rank_{(H)} \geq 2k+2$
+
+
+El supuesto 7 y el 8.a, descarta perfecta colinearidad, mientras que 8.b indica que el numero de instrumentos linearmente independientes es al menos, tan grande como el numero de parametros a estimar.
+
+##### Supuesto 9
+
+Las matrices:
+
+$$
+(A) p \lim_{N \to \infty} N^{-1}H'Z = Q_{HZ} , \\
+(B) p \lim_{N \to \infty} N^{-1}H'W Z = Q_{HWZ} , \\
+(C) p \lim_{N \to \infty} N^{-1}H'H = Q_{HH}
+$$
+
+Donde $Q_{HZ}$,$Q_{HWZ}$ y $Q_{HH}$ y $(Q_{HH}-\rho_2HWZ)$ son matrices finitas de rango completo.
+
+Este supuesto es necesario para el analisis de grandes muestras, pero lo que implica es la consistencia y normalidad asintotica del estimador.
+
+(se dejan afuera consideraciones respecto a los metodos de estimaciones, ya que se entiende que esto es procesado por el software, más adelante, con mayor práctica de los usos e implicaciones de modelos espaciales, se volverá a esta sección)
+
+
+## 3 Efectos de derrame en  modelos espaciales.
+
+### 3.1 Efectos de emanación.
+
+#### Desde una unidad dada
+
+Consideremos el modelo
+
+$y = X\beta+\rho_1Wy +u$
+
+Donde:
+
+  + $X$ es una matriz de variables exogenas.
+  
+  + $E(u) = 0$
+  
+La resolución viene dada por:
+
+$y = (I_N-\rho_1W)^{-1}[X\beta+u]$
+
+y 
+
+$E(y) = (I_N-\rho_1W)^{-1}X\beta$
+
+
+Ahora vamos a considerar las interpretaciones de este tipo de modelos. Para simplificar la cuestion, vamos a considerar que el modelo tiene solo una variable exogena, por lo que $X$ es un vector de $N\times 1$. Si $x_1$  es el primer elemento de ese vector.
+
+__efecto directo__ : Si no hubiera efectos de derrame espaciales, ($\rho_1 = 0$). Entonces la resolucion seria:
+$y_i = \beta x_i$ y el efecto de un cambio unitario en $x_i$ genera un cambio de $\beta$ en $y_i$. En efecto, los cambios generados por $x_1$, no afectan otras variables de $y_{2..N}$, solamente afectan a $y_1$ esto es lo que significa que no haya derrames espaciales.
+
+Ahora bien, considerando que si existen estos derrames, $\rho_1 \neq 0$
+
+Nuestra resolucion general era:
+
+$E(y) = (I_N-\rho_1W)^{-1}X\beta$
+
+Pero si hacemos un cambio de variable y decimos que:
+
+$G=(I_N-\rho_1W)^{-1}$
+
+nos queda que:
+
+$E(y) = GX\beta$
+
+Ahora bien, hacer esta multiplicación, en forma matricial, nos va a dar como resultado una vector de $y$.
+
+
+Pero si queremos ver, como un cambio en la primera observación de $X$ ($x_1$), afecta el RESTO el vector $E(y)$, ya que el efecto de $x_1$ en $y_1$ esta dado por $\beta$
+
+Para eso es necesario calcular:
+
+$\frac{\partial E(y_j)}{\partial x_i} = G_{j,1}\beta$ con $j = 2,...,N$
+
+Hay dos comentarios que hacer al respecto de esto:
+
+  + El efecto que tiene un cambio en $x_1$ sobre, digamos $y_10$, no es el mismo que sobre $y_21$, o sobre cualquier otro $y$, esto es: para la mayoria de las matrices de peso $W$, los efectos no serán los mismos.
+  
+  + Por otro lado, por mas que el elemento de la matriz $w_{1j} = 0$, es decir, que un elemento no sea vecino, eso no implica que $\frac{\partial E(y_j)}{\partial x_i} = 0$, porque, si bien no son vecinos, son vecinos de los vecinos.
+  
+Ahora bien, $\frac{\partial E(y_j)}{\partial x_i}*\frac{x_1}{y_j}$, es la elasticidad $\eta_{j1}$, por lo que la expresion mencionada arriba puede expresarse en esos terminos:
+
+
+$\frac{\partial E(y_j)}{\partial x_i} *\frac{x_1}{y_j} = \eta_{j1} = G_{j,1}\beta*\frac{x_1}{y_j}$ con $j = 2,...,N$
+
+
+Hay otro concepto tambienque hay que tener en, ¿estos efectos emanados, tambien afectan al propio? es decir:
+
+¿$\frac{\partial E(y_1)}{\partial x_1} \neq 0$?
+
+En efecto, este efecto se conoce como el "propio derrame",y 
+
+$\frac{\partial E(y_1)}{\partial x_1} = G_{11}\beta-\beta = (G_{11}-1)\beta$
+
+el cual puede ser expresado, con el mismo procedimiento arriba, como elasticidad.
+
+
+Hasta ahora se vió como el primer elemento de la primera regresora afecta a la totalidad de la variable dependiente.
+
+Pero tambien puede calcularse los efectos de un subgrupo de regresoras, sobre un subgrupo de elementos.
+Considerando ahora que $X$ es $N \times k$,
+
+$\Delta E(y) = (I_N-\rho_1W)^{-1}[X^H-X^0]\beta$
+
+Donde $X^H$ es el valor hipotetico de la matriz de regresoras en respuesta a un cambio en uno más elementos de $X$ y $X^0$ es el valor de la regresora al comienzo 
+
+
+### 3.3 Efectos de el empeoramiento uniforme de los fundamentals.
+
+En terminos formales: 
+
+Sea $X$ una matriz de regresoras exogenas de $N \times k$ y $X_{i}$ su *columna* $i$, por lo que todas las regresoras serían $X = (X_1,...X_k)$
+
+Usando esta notación:
+
+$$
+E(y) = (I-\rho_1W)^{-1}X\beta \\
+     = G(X_1\beta_1+...+X_k\beta_k)
+$$
+
+Que en realidad viene a representar un empeoramiento uniforme en las variables exogenas de un pais de origen, por sobre los demas.
+
+Por ejemplo:
+
+La respuesta en $E(y_j)$ de $j= 2,...,N$ respecto al empeoramiento en todas las $k$ variables del primer país es:
+
+$$
+\Delta E(y_j) = G_{ji}(\Delta x_{1,1}\beta_1)+...+G_{ji}(\Delta x_{1,k}\beta_k) 
+$$
+
+
+Aunque tambien puede calcularse en terminos porcentuales (considerando un modelo lineal), se agregan los valores absolutos de la variacion porque se supone, por simplificacion en la presentacion que todos los $\beta$ son positivos.
+
+
+$$
+\Delta E(y_j) = G_{ji}\frac{|\Delta x_{1,1}\beta_1|x_{1,1}}{x_{1,1}}+...+G_{ji}\frac{|\Delta x_{1,k}\beta_1|x_{1,k}}{x_{1,k}}
+$$
+
+
+De la misma forma, es posible calcular los efectos de emanacion en terminos porcentuales respecto al empeoramiento porcentual uniforme en todas las regresoras.
+
+$$
+\frac{\Delta E(y_j)}{\alpha y_j} = G_{j1}( \frac{x_{1,1}}{y_j}|\beta_1|+...+\frac{x_{1,k}}{y_j}|\beta_k|)\alpha
+$$
+
+donde 
+
+$$
+\alpha = \frac{\Delta x_{1,j}}{x_{1,i}} > 0
+$$
+Que es el empeoramiento uniforme en porcentaje
+
+
+
+### 3.3 Vulnerabilidad de una unidad a un efecto derrame.
+
+La vulnerabilidad es lo opuesto efecto de emanacion (derrame) ya que cuantifica la respuesta de una unidad dada respecto a los eventos que ocurren en las unidades vecinas.
+
+Para formalizar esta nocion considera el modelo:
+
+$$
+y = X\beta+\rho_1Wy+u
+$$
+
+con  $G = (I_N-\rho_1W)^{-1}$ y $E(y) = GX\beta$, en este caso $\beta$ es un escalar
+
+Para ejemplificarlo supongamos que las unidades son paises, $X$ es un vector con GDPs e $y$ es un vector de exportaciones. Y para fines demostrativos, supongamos que $\beta >0$
+
+$$
+V_1=\sum^N_{j=2} \frac{\delta E(y_1)}{\delta x_j} \\
+
+& \sum^N_{j=2}G_{1j}\beta
+$$
+
+Donde $V_1$ corresponde al efecto de vulnerabilidad. En nuestro ejemplo, ilustra como cambian las exportaciones antes cambios en el pbi de los paises vecinos.
+
+Aunque esta la version en datos discretos.
+
+$$
+\Delta y_1 = \sum^N_{j=2} G_{1j}\Delta x_j \beta
+$$
+
+
+
+# 4 Predicciones en modelos espaciales
+
+### 4.1 Preliminares de esperanzas
+
+Sea $m$ y $v$ variables aleatorias
+
+Sean los valores de $v$, $v_1, v_2,..._v_L$
+
+Sean las probabilidades de $v$: $Pr(v=v_j) = p_j$, donde $j = 1,...,L$
+
+Asumiendo la existencia de la media, la esperanza de $m$ condicional a $v=v_j$
+
+$$
+E(m|v=v_j), j = 1,...,L
+$$
+Generalizando:
+
+$$
+E(m) = \sum_{j=1}^L p_j E(m|v_j)
+$$
+Esta notacion implica dos terminos.
+
+  + El termino de la condicion de $m$, condicionado a $v$
+  
+  + La funcion de distribucion de probabilidad de $v$
+  
+Se puede simplificar la notacion de la siguiente manera:
+
+$$
+E(m) = \sum_{j=1}^L p_j E(m|v_j) = E_v[E(m|v)] = E_v[E_{m|v}(m)]
+$$
+
+
+Se puede simplificar aún más esta notacion diciendo que
+
+$$
+E(m|v) = S(v)
+$$
+
+Ya que el valor de $m$, al estar condicionado al valor de $v$, es funcion de $v$
+
+Por lo tanto:
+
+
+$$
+E(m) = \sum_{j=1}^L p_j E(m|v_j) = E_v[E(m|v)] = E_v[E_{m|v}(m)] = E_v[S(v)]
+$$
+
+Esto, es la generalizacion de un caso particular, de la esperanza de $m$ condicional a $v$.
+
+Se puede extender para incorporar más condicionantes sin perder sentido y decir que la esperanza de $m$ condicionada a $v$ y $z$ es:
+
+$$
+E(m|v,z) = S_1(v,z)
+$$
+
+Ahora bien, esto genera una situacion en la que se puede promediar $v$ y dejar fijo $z$ y viceversa. Pero si se promediara $z$ volveriamos a la situacion $E(m|v)$, pero la notacion es ligeramente distinta debido a que hay que ser explicitos respecto a el promediado de $z$
+
+Es decir:
+
+$$
+E(m|v) = E_{v|z}[S_1(v,z)] \\
+& = E_{v|z}[E(m|v,z)] \\
+& = E_{v|z}[E_{m|v,s}(m)]
+$$
+
+Medias condicionales son importantes, dadas sus condiciones, corresponden al predictor MMSE (minimum mean squared error). Sin embargo, hay un supuesto importante detrás de esta afirmación:
+
+$v$ y $z$ tienen sus funciones de distribucion, las funciones de distribución tienen parametros que las caracterizan. Sea $\gamma_{v,z}$ sean estos parametros.
+
+Entonces:
+
+$$
+E(m|v,z) = S_2(v,z,\gamma_{v,z})
+$$
+En muchos casos, $S_2$ será no-lineal en sus parametros. En general $\gamma_{v,z}$ no se conoce y debe estimarse($\hat\gamma_{v,z}$), lo cual no es una tarea sencilla. Finalmente, el predictor de $m$, será $m^P = S_2(v_j,z_j,\hat\gamma_{v,s})$, pero al usar esta estmiacion $m^P$ no es MMSE, pero se sigue usando por es lo mejor que se puede obtener sin conocer el vector parametros de las variables que condicionan.
+
+### 4.2 Sets de información y predictores de a variable dependiente
+
+Sean $Z_1$ y $Z_2$ dos vectores conjuntamente normalmente distribuidos es decir 
+$$
+(Z_1,Z_2) - N(\mu, V)
+$$
+Donde:
+
+ + $\mu' = (\mu_1',\mu_2')$
+ 
+ + $V=[{V_{ij}}], i,j = 1,2$
+
+
+Así, la distribución de $Z_1$, condicional a un valor particular de $Z_2$, ex $z_2$, es normal, y su media y si matriz de varianzas y covarianzas es:
+
+$$
+E(Z_1|Z_2=z_2) = \mu_1 + V_{12}V_{22}^{-1}(z_2-\mu_2) \\
+VC(Z_1|Z_2=z_2) = V_{11}- V_{12}V_{22}^{-1}V_{21}
+$$
+Ahora bien, si se promedia sobre todos los valores de $Z_2$, lo que ocurre es:
+
+
+$$
+E(Z_1|Z_2) = \mu_1 + V_{12}V_{22}^{-1}[E(Z_2)-\mu_2] \\
+ =  \mu_1 + V_{12}V_{22}^{-1}[\mu_2-\mu_2] \\
+ = \mu_1
+$$
+Pero veamos:
+
+  + $V_{12} = \sigma_{12}$ 
+  
+  + $V_{22} = \sigma^2_{2}$
+  
+  + $V_{11} = \sigma^2_{1}$
+  
+$$
+E(Z_1|Z_2=z_2) + Z_1 - E(Z_1|Z_2=z_2) = \mu_1 + \frac{\sigma_{12}}{\sigma^2_2} (z_2-\mu_2) + Z_1 - E(Z_1|Z_2=z_2) 
+$$
+En este caso, lo que se está haciendo es sumar $ Z_1 - E(Z_1|Z_2=z_2)$ a ambos lados.
+
+Si $\eta = Z_1 - E(Z_1|Z_2=z_2)$
+
+Entonces:
+
+$$
+Z_1 = \mu_1 + \frac{\sigma_{12}}{\sigma^2_2} (z_2-\mu_2) +\eta
+$$
+Lo que resulta en:
+
+$$
+E(\eta|Z_2 = z_2) = 0 \\
+E(\eta^2|Z_2 = z_2) = \sigma_1^2 - \frac{\sigma_{12}^2}{\sigma_2^2}
+$$
+
+Pero  sacando $\sigma^2_1$ como factor comun resulta que
+
+$$
+E(\eta^2|Z_2 = z_2) = \sigma^2_1[1-\frac{\sigma_{12}^2}{\sigma_2^2\sigma^2_1}] \\
+ = \sigma^2_1[1-R^2]
+$$
+
+#### Predictores basados en la solucion del modelo espacial:
+
+Considera el modelo:
+
+$$
+y = \rho_1Wy+X\beta+u \\
+u = \rho_2Wu+\epsilon
+$$
+Asumiendo que la inversa exista y que $\epsilon$ ~ $N(0,\sigma_\epsilon^2I_N)$, la solucion del modelo esta dada por:
+
+$$
+y = (I_N-\rho_1W)^{-1}X\beta + (I_N-\rho_1W)^{-1}u \\
+y = (I_N-\rho_1W)^{-1}X\beta + (I_N-\rho_1W)^{-1}(I_N-\rho_2W)^{-1}\epsilon
+$$
+
+
+
+Si suponemos que los parametros son $\lambda$, y son conocidos, junto a W,X y los $N-1$ valores de $y$, lo que queremos predecir es el enesimo valor de $y_N$
+
+Sea $(I_N-\rho_1W)^{-1}_N$ la $N_{th}$ fila de $(I_N-\rho_1W)^{-1}$
+
+$$
+y_N = (I_N-\rho_1W)^{-1}_NX\beta + (I_N-\rho_1W)^{-1}_Nu 
+$$
+
+
+Hay otra forma mas sintetica de expresar esto mismo:
+$$
+y_N = x_{N.}\beta+\rho_1w_{N.}y+u_N \\
+u_N = \rho_2w_{N.}u_N+\epsilon_N
+$$
+
+Donde:
+
+  + $x_{N.}$ es:la $N_{th}$ columna de X
+  
+  + $w_{N.}$ es:la $N_{th}$ columna de W
+
+
+
+##### Un predictor considerado en la literatura es la *media condicional de $y_N$ basada en la solucion del modelo*
+
+$$
+y^{[1]}_N = E(y_N|X,W,\lambda) \\
+ =  (I_N-\rho_1W)^{-1}_NX\beta
+$$
+Se entiende este conjunto de variables (W,X) y parametros ($\lambda$), como el set de información $\Psi_1$, este set de información es el que surge de la solucion del modelo y por lo tanto no suele ser referenciado en los articulos de investigación. 
+
+
+##### Un predictor basado en una set de información mas grande $\Psi_2$
+
+Sea: 
+
+$\Psi_2 = (X,W,\lambda,w_N, y)$
+
+entonces
+
+$$
+y_N^{[2]} = E(y_N|\Psi_2)  \\
+ = \rho_1w_{N.}y+x_{N.}\beta + E(u_N|\Psi_2) \\
+ = \rho_1w_{N.}y+x_{N.}\beta + \frac{cov(u_N,w_{N.}y)}{var(w_{N.}y)}[w_{N.}y-E(w_{N.}y)]
+$$
+
+Este predictor da cuenta de la correlacion entre $w_{N.}y$ y $u_{N.}$
+
+
+
+
+
+##### El predictor completo:
+
+Sea $\Psi_{3}=(X,W,\lambda,y_{-N})$ donde $y_{-N}$ es identico a $y$ excepto que $y_N$ se elimina
+
+
+$$
+y^{[3]}_N = E(y_N|\Psi_3) \\
+= \rho_1w_{N.}y+x_{N.}\beta + E(u_N|\Psi_3) \\
+= \rho_1w_{N.}y+x_{N.}\beta + cov(u_N,y_{-N})[VC(y_{-N})]^{-1}[y_{-N}-E(y_{-N})]
+$$
+
+
+Esta formulacion contiene dos elementos que cabe aclarar:
+
+  + $E(y_{-N})=I_{-N,N}[(I-\rho_1W)^{-1}X\beta]$
+  
+    + $I_{-N,N}$, es igual a $I_N$ solo que se elimina la fila $N$ 
+
+  + $VC(y_{-N}) = \sigma^2_\epsilon I_{-N,N}AA'I'_{-N,N}$
+  
+    + $A=(I-\rho_1W)^{-1}(I-\rho_2W)^{-1}$
+    
+Finalmente..
+
+##### Un predictor intuitivo:
+
+Si un investigador ignora las correlaciones de la variable endogena con el termino de error, su predccion será:
+
+$$
+y_N^{[4]} = x_{N.}\beta+\rho_1w_{N.}y.
+$$
+
+Pero este predictor esta sesgado porque esta basado en $\Psi_2$ pero no considera la correlacion entre $w_{N.}y_N.$ y $u_N$
+
+Se puede calcular el sesgo simplmenete haciendo $bias_N^{[4]}=y_N^{[4]}-y_N^{[4]}$
+
+Se suele usar porque es facil de calcular y es intuitivo
+
+
+
+#### 4.3 Mean Squared Error of the predictors:
+
+Los MSE se suelen presentar:
+
+  + Sum of squared bias + variance
+  
+Los siguientes eran estimadores insesgados :
+
+$$
+y^{[1]}_N = E(y_N|X,W,\lambda) 
+$$
+
+
+$$
+y_N^{[2]} = E(y_N|\Psi_2)
+$$
+
+$$
+y^{[3]}_N = E(y_N|\Psi_3)
+$$
+
+
+Mientras que $y^{[4]}$ es sesgado.
+
+El motivo del sesgo esta dado principalmente porque $y^{[1,2,3]}$ son medias condicionales a los sets de información utilizados, mientras que $y^{[4]}$, no, por lo que su error cuadratico va a involucrar el predictor del sesgo de predicction y el termino de la varianza.
+
+Es posible calcular el error cuadratico medio para cada uno de estos predictores. Pero antes, recordemos las expresiones de $y_N$, para compararla con cada una de los calculos de los estimadores.
+
+$$
+y_N = (I_N-\rho_1W)^{-1}_NX\beta + (I_N-\rho_1W)^{-1}_Nu 
+$$
+
+*MSE de $y_N^{[1]}$*
+
+El error siempre va a ser $(\hat y - y)$, es decir,la prediccion menos el valor realizado.
+
+En el caso de esta prediccion:
+
+$$y_N-y_N^{[1]} =(I_N-\rho_1W)^{-1}_Nu  $$
+Pero el error cuadratico medio siempre fue:
+
+$$
+MSE(\hat y) = \frac{\sum(\hat y-y)^2}{n}
+$$
+En el caso de nuestro estimador es:
+
+$$
+MSE(y^{[1]}_N) = \sigma_\epsilon^2(I-\rho_1W)^{-1}_{N.}(I-\rho_1W)^{-1}(I-\rho_1W')^{-1}(I-\rho_1W)_{N.}'^{-1} \\
+ =\sigma_\epsilon^2(I-\rho_1W)^{-1}_{N.}\Omega_u(I-\rho_1W)_{N.}'^{-1}
+$$
+Donde $\Omega_u = (I-\rho_1W)^{-1}(I-\rho_1W')^{-1}$
+
+
+
+*MSE de $y^{[2]}$*
+
+Acá se empieza acomplicar porque la estimacion se hace en base al set de informacion $\Psi_1$, por lo tanto la prediccion y el error estan condicionados a ese set de información.
+
+$$
+u_N = E(u_N|\Psi_2) + v_N
+$$
+
+Esto implica que $E(v_N|\Psi_2) = 0$
+
+Recuperemos un segundo la expresion que calcula $y^{[2]}$
+
+
+
+$$
+y^{[2]}  = \rho_1w_{N.}y+x_{N.}\beta + \frac{cov(u_N,w_{N.}y)}{var(w_{N.}y)}[w_{N.}y-E(w_{N.}y)]
+$$
+Por el analisis hecho en base a $y^{[4]}$ sabemos que el ultimo termino corresponde al sesgo, y por lo tanto:
+
+$$
+E(u_N|\Psi_2) = \frac{cov(u_N,w_{N.}y)}{var(w_{N.}y)}[w_{N.}y-E(w_{N.}y)] 
+$$
+
+*MSE de $y^{[3]}_N$*
+
+Recupero nuevamente la expresion que define $y^{[3]}_N$
+
+$$
+y^{[3]}_N = E(y_N|\Psi_3)
+$$
+Donde 
+$\Psi_{3}=(X,W,\lambda,y_{-N})$
+
+
+$$
+y^{[3]}_N 
+= \rho_1w_{N.}y+x_{N.}\beta + cov(u_N,y_{-N})[VC(y_{-N})]^{-1}[y_{-N}-E(y_{-N})] + q_N
+$$
+Donde $E(q_N|\Psi_3)=0$ y
+
+$var(q_N|\Psi_3)=var(u_N|\Psi_3)$
+
+
+Como $y_N-y^{[3]}_N = q_N$
+
+Entonces 
+$MSE(y^{[3]}_N)=var(u_N|\Psi_3)$
+
+
+
+*MSE de $y^{[4]}_N$*
+Como este es: esencialmente que $y^{[2]}_N$ + sesgo
+$$
+MSE(y^{[4]}) = E[(y_N-y^{[4]}_N)^2|\Psi_2] \\
+ = (bias^{[4]})^2+MSE(y_N^{[2]})
+$$
+
+Acá se genera un problema de comparacion de errores, porque efectivamente, si el estimador es insesgado, no depende de las realizaciones del termino de error. Pero con el ultimo estimador lo que ocurre es que el error tiene dos partes que son cualitativamente distintas. En efecto, lo que hay que hacer para generar una comparacion pertinente es promediar sobre las realizaciones del termino de error para dar cuenta de esta diferencia.
+
+Es decir, lo que se compara con cada uno de $MSE(y^{[1,2,3]}_N)$  es $E[MSE(y_N^{[4]})]$
+
+
+Ahora que estan listos los MSE, ¿como se hace la comparacion?
+
+Como estos indicadores son calculados a partir de sets de información cada vez mayores, la informacion agregada en cada uno de ellos permite la evaluacion de la relevancia de la utilizacion de sets de informacion cada vez mas grandes.
+
+Lo que se esperaria encontrar, si la información agregada en cada set es relevante es que:
+
+$$
+MSE(y^{[1]}_N)\geq MSE(y^{[2]}_N) \geq MSE(y^{[3]}_N), \\
+E[MSE(y^{[4]}_N)] \geq MSE(y^{[2]}_N)
+$$
+
+Respecto al estimador $y^{[4]}_N$, que es sesgado, puede incluso ser más preciso que $y^{[1]}_N$, debido a que la relevancia de la utilización de un set de información más grande más que compensa el sesgo.
+
+
+# Capitulo 5: Problemas en la estimacion de $W$
+
+En algunos casos, el investigador no está seguro cual es la especificación correcta de $W$,  y en general puede ir probando con distintas opciones usando como guia al $R^2$. Lo cual es incorrecto.
+
+Una tecnica es aquella que dice que la teoria es una buena guía en la selección de las matrices. Consistencia en este sentido es clave.
+
+### 5.1 El modelo espacial
+
+Partimos del modelo espacial clasico como siempre:
+$$
+y = \alpha e_N +X\beta+\rho_1Wy+u
+$$
+Pero en este caso se considera que todos los elementos de la matriz, salvo la diagonal que siempre es $0$, son iguales:
+
+$$
+\begin{bmatrix}0 & c_N   & c_N  \\
+c_N & 0 & c_N \\
+c_N & c_N & 0\end{bmatrix}
+$$
+
+Donde $f(N) = c_N$
+
+### 5.2 Problemas de basar la selección de la matriz $W$ con el $R^2$
+
+Sea $y' = (y_1, ..., y_N)$ y  $w_{i.}$ la fila i de $W$  (tomando todas las columnas)
+
+$$
+w_{i.}y =( \sum^N_{i=1} c_Ny_i)-c_Ny_i
+$$
+
+Esto es así porque el valor que toma la matriz es igual para todos, pero como el $ith$ elemento es $0$, deberá ser restado.
+
+otra 
+
+Forma de expresarlo seria:
+
+$$
+w_{i.}y = Nc_N \bar y - c_Ny
+$$
+donde $\bar y$ es el promedio.
+
+Apilando cada $w_{i.}$, obtenemos $W$,por lo que 
+$$
+Wy = (Nc\bar y)e_N-c_Ny
+$$
+Lo cual puede ser reemplazado en nuestro modelo original:
+
+$$
+y = \alpha e_N + X\beta+\rho_1[ (Nc\bar y)e_N-c_Ny] + u
+$$
+
+Los estimadores de estos parametros quedan:
+
+$$
+\hat \rho_1 = \frac{-1}{c_N} ; \hat\alpha = N\bar y; \hat \beta = 0 
+$$
+
+Una de las implicancias de esto es que si varias matrices son juzgadas a partir de el $R^2$ existirá un sesgo para seleccionar matrices cuyos elementos sean los mas uniformes.  Estas consecuecias son similares ya sea que se trate de modelos espaciales lineales como no linales (en $W$)
+
+### 5.4 Selección de $R^2$, en caso de tener muchos paneles.
+
+Algunas veces, a diferencia de los modelos de un solo panel, es util tener una matriz de pesos uniformes, pero muchas otras veces no. 
+
+Tomemos un ejemplo concreto:
+Une investigadore pretende analizar la extension de fertilizantes que usan los granjeros, pero transversalmente a muchas villas
+
+Supuestos:
+
+  + Los granjeros aprenden de los otros granjeros en la villa.
+  
+  + No hay interacciones entre las villas.
+  
+  + El investigador sabe que el granjero $i$ esta en la villa $J$
+  
+  + No hay una medida disponible de los niveles de aprendizaje entre granjeros
+  
+  + Hay un numero de granjero distinto en cada villa
+
+
+El modelo, en la villa $J$ es:
+
+$$
+y_J = e_{N_j}\alpha + X_J\beta + \rho_1W_Jy_J+u_j
+$$
+de $J = 1, ... , G$
+
+
+La matriz de pesos de cada villa $W_J$, en este caso, es homogenea, con la diagonal es $0$
+
+El modelo que incluye todas las villas, es una forma apilada del modelo anterior
+
+$$
+y = e_{N}\alpha + X\beta + \rho_1Wy+u
+$$
+
+Donde:
+
+  + $y' = (y_1',...,y_G')$
+  
+  + $X' = (X_1',...,X_G')$
+  
+  + $W = diag_{J = 1}^G(W_J)$
+  
+  + $u' = (u_1',...u_G')$
+  
+Y:
+
+$$
+Wy = \begin{bmatrix}(N_1c_{N_1}\bar y_1)e_N- c_{N_1}\bar y_1 \\
+\vdots \\
+(N_Gc_{N_G}\bar y_G)e_N- c_{N_G}\bar y_G
+\end{bmatrix}
+$$  
+
+Como cada $(N_Jc_{N_J}\bar y_J)e_N- c_{N_J}\bar y_J$, $J=1,...G$ es distinto porque, justamente $c_N$ depende del tamaño y cada villa tiene cantidad distinta en cada villa, el resultado, este caso es relevante.
+
+Usando $R^2$ para la selección de la matriz de peso adecuada, no hay sesgo en favor de matrices mas homogeneas.
+
+Hay algunas cosas que pueden, sin embargo, volver inutil este tipo de modelos, por ejemplo, incorporar 
+efectos fijos. Esto generaria, debido a la variable dicotomica, volver aestar la situacion que teniamos antes.
+
+Asimismo, si cada villa tiene el mismo numero de granjeros, la matriz se vuelve perfectamente uniforme
+
+## 6 Additional Endogeous Variables: Posibles Non-linearities
+
+#### Comentarios introductorios
+
+El principal objetivo del libro son modelos espaciales lineales, pero endogeneidades todavía pueden aparecer, considedrá el modelo:
+
+$$
+y = XB+\rho_1Wy+Y\gamma+u
+$$
+
+Donde:
+  
+  + y es un vector de observaciones del nivel demanda laboral en ciertas regiones.
+  
+  + X es la matriz de variables exogenas (explicativas)
+  
+  + Y es una matriz de variables endogenas, tal como los salarios, la productividad del trabajo y demás
+  
+
+Se supone, además, que el sistema que determina las regresoras endogenas no se conoce, y además puede contener no-linearlidades. Aun así se puede esperar que el investigador todavía algunas de las variables exogenas del sistema desconocido.
+
+#### 6.2 Identificación y estamcion: Un sistema lineal
+
+Considera el sistema lineal:
+
+$$
+y_{i1} = a_1+a_2y_{i2}+a_3x_i+\epsilon_{i1} & i = 1,....,N
+y_{i2} = b_1+b_2x_{i1}+\epsilon_{i2} & i = 1,....,N
+$$
+
+
+Donde:
+
+  + $x_i$ es un escalar no-estocastico:
+  
+  + $\Sigma = (\sigma_{ij})$ con i,j = 1,2
+  
+  + $\sigma_{12} \neq 0$, lo cual implica que los terminos de error estan correlacionados en las ecuaciones.
+  
+En los sistamas de ecuaciones lineales existe la condicion de orden:
+
+  + El número de regresoras endogenas $\leq$ n° de variables predeterminadas que estan excluidas de la ecuacion pero están en el sistema.
+
+Esta condicion de orden no se cumple en este sistema, porque no hay variables excluidas, y hay una variable endogena. Por lo tanto, los parametros de la primera ecuacion no están definidos
+
+Usando la estimacion en dos pasos 2SLS, podrias regresar  $y_{i2}$ en las variables exogenas, obtener la estimación y, a partir de allí, estimar $y_{i1}$:
+
+El paso intermedio de este tipo de procedimientos requiere obtener la matriz de regresoras $\hat Z_1$, llamada "second stage regresor"
+
+$$
+\hat Z_1 = \begin{bmatrix}1 & \hat y_{12} & x_1 \\ \vdots & \vdots & \vdots \\ 1 & \hat y_{N2} & x_N \end{bmatrix}
+$$
+
+Pero hay un problema, como $\hat y_{N2}$ es una combinacion lineal de $x_N$, el rango de esta matriz es menor al tamaño, por lo que no existe inversa de $\hat Z_1'\hat Z_1$ y por lo que no tiene solucion.
+
+Aun regresando la variable $\hat y_{N2}$, sobre $x_i^2$, se soluciona porque asintoticamente los parametros obtenido para disipar la relacion lineal que tienen las columnas tienden a 0.
+
+
+#### 6.3 Un modelo no-lineal correspondiente:
+
+Un modelo, similar al considerado anteriormente, pero no lineal vendria a estar dado por:
+
+$$
+y_{i1} = a_1+a_2e^{y_{i2}}+a_3x_i+\epsilon_{i1} ;   i = 1,....,N \\
+y_{i2} = b_1+b_2x_{i}+\epsilon_{i2}  ; i = 1,....,N 
+$$
+
+Al exisitir estas no-linealidades, se permite estimar el procedimiento por 2SLS. 
+
+*En forma general:*
+
+Sea G un sistema de ecuaciones no-lineales con:
+
+  + regresadas en el vector $y_i=(y_{i,1},...,y_{i,G})'$
+
+  + errores en el vector $e_t=(e_{i,1},...,e_{i,G})'$
+  
+  + $X_i$ sea el vector no estocastico de tamaño $L \times 1$:
+  
+  +  $\begin{bmatrix}f_1(y_i,X_i,e_{i1})=0 \\\vdots\\ f_G(y_i,X_i,e_{iG})=0\end{bmatrix}$ (la igualdad a cero se da por incluir el vector de regresadas)
+
+
+
+Un sistema de ecuaciones como el mencionado anteriormente es generalmente conocido como un model de ecuaciones estructurales 
+
+
+Todo este modelo puede estar contenido en la siguiente notacion:
+
+$$
+F(y_i,X_i,\epsilon_i) = 0_{G\times 1}
+$$
+Y la solucion del modelo se expresa:
+
+$$
+y_i= S(X_i,\epsilon_i)
+$$
+
+Como estas funciones no son lineales, la media condicional de estas ecuaciones no pueden ser obtenidas haciendo que $\epsilon_i = 0$
+$$
+E(y_i) = E[S(X_i,\epsilon_i)]\\
+\neq S(X_i, E(\epsilon_i))\\ S(X_i,0)
+$$
+
+
+
+
+
+
+
+#### 6.3 Estimación en el modelo no-lineal:
+
+Volviendo al sistema de ecuaciones en:
+
+$$
+y_{i1} = a_1 + a_2(e^{y_{i2}})+a_3x_i+\epsilon_{i1} \\
+y_{i2} = b_1+b_2x_i+\epsilon_{i2}
+$$
+
+Supongamos que $\sigma_{12} \neq 0$, en ese caso $e^{y_{i2}}$ es un regresor endógeno. Como consecuencia de tal hecho, OLS no puede ser estimado consistentemente. 
+
+Pero si puede ser estimado por 2SLS.
+
+Usando la matriz de instrumentos:
+$$
+X_2 = \begin{bmatrix}1 & x_1 & x_1^2 \\ \vdots & \vdots & \vdots \\ 1 & x_N & x^2_N \end{bmatrix}
+$$
+Recordar que la variable de instrumentos existe porque $X'\epsilon \neq 0$, pero si incorporamos el cuadrado, dado un sistema estructural de variables no-lineales, el rango de la matriz es igual a sus dimensiones y el sistema de ecuaciones puede ser resuelto.
+
+La variable endógena esta en una relacion no lineal en el sistema:
+
+$$
+e^{y_{i2}} = e^{[b_1+b_2x_i+\epsilon_{i2}]} = e^{[b_1+b_2x_i]}e^{[\epsilon_{i2}]}
+$$
+Pero $E[e^{\epsilon_{i2}}]$ es una constante $K$, por lo que 
+
+$e^{\epsilon_{i2}} = K + q_i$.
+
+Pero como $\epsilon_{i2}$ es una variable normalmente distribuida con varianza  $\sigma_{22}$ y media 0, los momentos estadisticos de $q_i$ son:
+
+$$
+E(q_i) = 0 \\
+\sigma_{q_i} = E(q_i^2)-K^2 \\
+E(q_i^2) = E(e^{2e_{i2}}) = e^{2\sigma_{22}}
+$$
+De las ecuaciones presedentes, el corolario es:
+
+$$
+e^{[b_1+b_2x_i]}(K + q_i) = e^{[b_1+b_2x_i]}(K) + e^{[b_1+b_2x_i]}(q_i) \\
+= f(x_i)+w_i
+$$
+Donde $E(w_i)=0$
+
+
+Asimismo, la varianza de $\sigma_{wi}^2 = e^{2[b_1+b_2x_i]}\sigma_{qi}^2$
+
+Pero que ocurre, ahora tenemos que:
+
+$$
+e^{y(2)} = f(x)+w = X_2\hat C = \hat c_1+\hat c_2x_i+\hat c_3 x_i^2
+$$
+Y ahora si, se puede estimar esta funcion por MCO, ya que es el segundo paso de 2SLS
+
+
+#### 6.7 Aplicación a modelos espaciales de regresoras endógenas.
+
+Considera:
+
+$$
+y = X_1\beta_1+\rho_1W_1y + Y\beta_2+u\\
+u = \rho_2W_1u+\epsilon
+$$
+Donde:
+
+  + $X_1$ es la matriz de regresoras exogenas de $N \times k_1$
+  
+  + $W_1$ es una matriz corriente de pesos de $N \times N$
+  
+  + $Y$ es una matriz de regresoras *endogenas* de $q$ variables, de tamaño $N \times q$
+  
+  + $\epsilon$ es un vector de errores i.i.d con media 0 y $\sigma_{\epsilon}^2$
+  
+La solucion existe y es:
+
+$$
+y = [I_N-\rho_1W_1]^{-1}[X_1\beta_1+Y\beta_2+u]
+$$
+
+*Caso A: Un sistema de ecuaciones totalmente lineal*
+
+Asumamos que el sistema completo que determina $y$ y las $q$ variables de $Y$ es endogeno y no se conoce.
+
+Este sistema desconocido tiene las variables $X_1$, que es conocido y de dimensión $N \times k_1$.
+
+Pero tambien tiene las variables $X_2$, de las cuales no se conocen todas, sino solo una fracción $X^*_2$
+
+En este contexto $X_2$ es $N \times k_2$ y $X_2^*$ es $N \times s$, donde $s\leq k$
+
+No solo tiene las variables desconocidas $X_2$, sino que tambien de un conjunto de matrices de peso $W=(W_1, W_2,...W_q)$, donde solo conocemos la primer $W_1$
+
+Nuestro set de información de variables necesarias para estimar el sistema completo de Y e y es: $\Gamma = (X_1,X_2,W)$ Por lo que la esperanza de Y es función de estas variables.
+
+$E(Y) = G(\Gamma)$
+
+
+Nuestros instrumentos para poder estimar la función original, porque necesitamos instrumentos porque deconocemos $X_2$ y $W$ sería:
+
+$$
+H_L = (X_1,W_1X_1,...W^rX_1,X_2^*,WX_2^*,...,W^rX_2^*)_{LI}
+$$
+Ahora bien, ¿cuales son las caracteristicas de este instrumento H
+
+El modelo original, reducido, tiene $k_1$(exogenas)+$q$(endogenas)+$1$(intercepto) parametros de regresión. Por lo que los instrumentos tienen que tener esa cantidad de columnas linealmente independientes.
+
+Expresando el modelo a estimar así:
+
+$$
+y = M\gamma+u \\
+u = \rho_2W_1+\epsilon
+$$
+Donde:
+
+  + $M=(X_1,W_1y,Y)$
+
+  + $\gamma = (\beta'_1,\rho_1,\beta'_1)$
+  
+  + $P_{HL} = H_L(H_L'H_L)^{-1}H'_L$
+  
+  + $\hat M = P_{HL}M$
+
+
+
+El procedimiento de estimación queda, entonces:
+
+1. $\hat\gamma = (\hat M \hat M)^{-1}\hat M'y$
+
+2. $\hat u = y -M\hat\gamma$
+
+3. Usando el resultado del punto anterio, estimar $\hat \rho_2$
+
+4. Transformar $y = M\gamma+\rho_2W_1+\epsilon$, en:
+
+$$
+y(\hat \rho_2) = y-\hat\rho_2Wy \\
+M(\hat \rho_2) = M - \hat \rho_2 WM
+$$
+5. Reestimar  $\gamma$
+
+### 7 Analisis Bayesiano
+
+#### 7.2 Los fundamentos de la aproximacion bayesiana
+
+
+Ok, digamos que tenemos un parametro $\eta$, que determina la variable $x$. Existe, para tal par, una función de densidad de probabilidad conjunta, digamosle $f(x,\eta)$.
+
+Esta, nuestra funcion de densidad de probabilidad, puede ser factoreada en funciones de densidad marginales y condicionales.
+
+$$
+f(x,\eta) = f_x(x)f_{\eta|x}(\eta|x) \\
+= f_{\eta}(\eta)f_{x|\eta}(x|\eta) 
+$$
+
+Donde 
+
+   + $f_{\eta}(\eta)$ y $f_{x}(x)$ son las funciones marginales (respectivamente)
+   
+   + $f_{\eta|x}(\eta|x)$ y  $f_{x|\eta}(x|\eta)$ son las funciones condicinoles
+
+Como ambas expresiones son equivalentes, tenemos que:
+
+$$
+P_{\eta|x}(\eta|x) = \frac{f_\eta(\eta)f_{x|\eta}(x|\eta)}{f_x(x)}
+$$
+
+¿Cual es la interpretacion coloquial de esto?
+
+Bueno, $f_{x|\eta}(x|\eta)$ es la likelihood, esto es, la probabilidad de $x$, dado un $\eta$ determinado. Y la funcion de densidad marginal de $\eta$ nos da el $\eta$ probable, incondicional. es el prior
+La fdp de $f_x(x)$ esta ahi para escalar y asegurar que $P_{\eta|x}$ integre a 1.
+
+
+#### 7.3 Learning and Prejudgment Issues
+
+Este marco puede ser usado en series de tiempo.
+Supongamos que en un $t$ dado, nuestros datos son $Z_1=(x_1,...x_t)$. Es decir, se conocen los datos del pasado y del presente, pero no del futuro.
+Usando este marco,la distribución posterior de $\eta$ es:
+
+$$
+P_{\eta|Z_1} = \frac{f_\eta(\eta)f_{Z_1|\eta}(Z_1|\eta)}{f_{Z_1}(Z_1)}
+$$
+
+Pero en $t>1$, la posterior va a estar dada por:
+
+$$
+P_{\eta|Z_t} = \frac{f_{Z_{t-1}|\eta}(Z_{t-1}|\eta)f_{Z_t|\eta}(Z_t|\eta)}{f_{Z_t}(Z_t)}
+$$
+Esto nos trae a colacion una teoria de aprenizaje y prejuicio. ¿Cómo?
+
+En el marco bayesiano, en el cual el investigador no tiene priors acerca de la información, se toma qe $\eta$ es equiprobable en un intervalo $\pm m$ donde $m$ es un numero muy grande, en cuyo caso, el prior podría ser tomado como $f_\eta(\eta)=1/(2m)$, como este prior implica la equiprobabilidad de $\eta$ en ese intervalo, la posterior 
+$$
+P_{\eta|Z_1}(\eta|Z_1)\propto f_{Z_1|\eta}(Z_1|\eta)
+$$
+Esto significa que cuan más "vago" sea la determinación del prior, la posterior va a estar más influido por los la likelihood
+
+Recordar que en analisis bayesiano:
+
+  + El parametro $\eta$ es una variable aleatoria
+  
+  + La muestra esta dada
+
+Supón, por una parte que:
+
+$$
+f_{Z_1|\eta}(Z_1|\eta) \propto exp[-\frac{1}{2}(\eta-\mu)^2]
+$$
+
+En este caso, se supone la distribución de $\eta$ sea $N$~$(\mu, 1^2)$. En este caso, la posterior esta totalmente dada por la muestra.
+
+
+Por otro lado, supon que el prior es:
+
+$$
+f_{\eta}(\eta) = 0.2,(0.2-10^{-25})<\eta<(0.2+10^{-25})
+$$
+Ahora bien, el rango de variación de $\eta$ es sumamente limitado en este caso, por lo que $f_{Z_1|\eta}(Z_1|\eta)$ es virtualmente constante. Por lo que la posterior estará totalmente determinada por el prior.
+
+
+#### 7.5 Application and limiting cases
+
+Arrancamos con un preliminar, la expresion cuadratica lineal:
+
+$$
+Z'AZ-2B'Z = (Z-A^{-1}B)'A(Z-A^{-1}B)-B'A^{-1}B
+$$
+Esta expresion será relevante enseguida.
+
+
+__Ilustracion__
+
+Se tenga un modelo lineal con una varianza del error conocida.
+
+$$
+y = X\beta+\epsilon
+$$
+Aparte del modelo, hay un conjugado natural de $\beta$ ~ $N(\beta_0,\sigma_0^2I_k)$
+
+Siendo $\beta_0$ y $\sigma_0^2$ parametros del prior, se conocen. Otra cosa que se conoce es la varianza del error del modelo $\sigma_*^2$
+
+¿Que nos dicen estos parametros?
+
+Bueno $\sigma_0^2$ nos esta hablando de cuan preciso es nuestro prior.
+
+$\sigma_*^2$ nos esta hablando de cuanta información hay en la muestra acerca de $\beta$, porque es esto asi? Bueno, cuanto mayor sea la variabilidad del termino de error, la muestra obtendra menos información, es decir, el $\sigma_*^2$ es proporcional a la entropia sobre $\beta$
+
+La posterior va a venir por:
+
+$$
+P(\beta|data) \propto exp[-\frac{1}{2\sigma_*^2}(y-X\beta)'(y-X\beta)] * exp[-\frac{1}{2\sigma_0^2}(\beta-\beta_0)'(\beta-\beta_0)]
+$$
+
+Esta es la presentación en formula de la posterior, pero hay varias equivalencias que pueden aprovecharse para la resolucion, ellas son::
+
+$$
+\hat \beta = (X'X)^{-1}X'y \\
+\hat \epsilon = (y-X\hat\beta)
+$$
+Por lo que 
+$$
+(y-\beta X) = [\hat \epsilon+X(\hat\beta-\beta)]
+$$
+Pero recordemos que, por definicion, $\hat\epsilon' X=0$
+
+Haciendo reemplazos y malabares algebraicos la likelihood L queda:
+
+$$
+L\propto exp[-\frac{1}{2\sigma_*^2}(\hat\beta-\beta)'X'X(\hat\beta-\beta)]
+$$
+
+Pero como hacemos para expresar la posterior de tal manera que pueda ser resuelta? Ahora nos viene a la mano saber que:
+
+$$
+Z'AZ-2B'Z = (Z-A^{-1}B)'A(Z-A^{-1}B)-B'A^{-1}B
+$$
+
+
+Porque 
+
+$$
+P(\beta|data) \propto exp[-\frac{1}{2\sigma_*^2}(\hat\beta-\beta)'X'X(\hat\beta-\beta)] * exp[-\frac{1}{2\sigma_0^2}(\beta-\beta_0)'(\beta-\beta_0)]
+$$
+Lo cual resuelve en:
+
+$$
+P(\beta|data) \propto exp[-\frac{1}{2}(\beta'A_1\beta-2A'_2\beta)]
+$$
+Donde A1 y A2 son:
+
+$$
+A_1 = [\frac{1}{\sigma_*^2}X'X+\frac{1}{\sigma_0^2}I_k] \\
+A_2 = [\frac{1}{\sigma_*^2}X'X\hat\beta+\frac{1}{\sigma_0^2}\beta_0]
+$$
+
+Finalmente:
+
+$$
+P(\beta|data) \propto exp[-\frac{1}{2}(\beta-A_1^{-1}A_2)'A_1(\beta-A_1^{-1}A_2)]
+$$
+
+Esto tiene las siguientes implicancias respecto a $\beta$
+
+ + $\beta$ sigue una distribucion normal multivariable
+ 
+ + Esta distribucion normal multivariable esta dada por:
+ 
+$$
+E(\beta|data)=  A_1^{-1}A_2 \\
+VC_{\beta|data}=A_1^{-1}
+$$
